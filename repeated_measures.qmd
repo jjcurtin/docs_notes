@@ -93,7 +93,7 @@ d_wide |>
   summary()
 ```
 
-### lmer approach without random effect of time and c_time as manually coded regressor
+### lmer approach without random effect of time and time as manually coded regressor
 
 * This is first option using manually coded regressor for time (time_2v1, 0.5 vs. -0.5)
 * Use random intercept but no random slope for time when there are no [psuedoreplications](https://psyteachr.github.io/stat-models-v1/linear-mixed-effects-models-with-one-random-factor.html) (i.e., where there is only one observation per cell)
@@ -303,11 +303,11 @@ d |>
 ```
 
 
-### Lmer with time as continuous variable
+### lmer with time as continuous variable
 
 Now we can specify by subject random slope for time
 
-And this model doesnt make sphericity assumption because it allows for the slopes to vary by subject
+And this model doesn't make sphericity assumption because it allows for the slopes to vary by subject
 
 ```{r}
 d <- d |> 
