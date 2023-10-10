@@ -643,8 +643,12 @@ time3  0.3333333  0.5</code></pre>
 </div>
 <section id="using-afexaov_car" class="level3" data-number="1.6.1">
 <h3 data-number="1.6.1" class="anchored" data-anchor-id="using-afexaov_car"><span class="header-section-number">1.6.1</span> Using <code>afex::aov_car</code></h3>
-<p>This provides us with main effect of Time (2 df) with the pooled error term (64 ddf). * This is only appropriate if sphericity assumption is met.<br>
-* Can get corrections to dfs if assumption is violated. Use <code>anova()</code> from stats package</p>
+<p>This provides us with main effect of Time (2 df) with the pooled error term (64 ddf).</p>
+<ul>
+<li>This is only appropriate if sphericity assumption is met.<br>
+</li>
+<li>Can get corrections to dfs if assumption is violated. Use <code>anova()</code> from stats package</li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>m_afex <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span> </span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  afex<span class="sc">::</span><span class="fu">aov_car</span>(hdd <span class="sc">~</span> time <span class="sc">+</span> <span class="fu">Error</span>(study_id<span class="sc">/</span>time), <span class="at">data =</span> _)</span>
@@ -856,8 +860,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <h3 data-number="1.6.4" class="anchored" data-anchor-id="lmer-approach-with-regressors-for-time"><span class="header-section-number">1.6.4</span> lmer approach with regressors for time</h3>
 <ul>
 <li>Do NOT include by subject random slope for time because no pseudoreplications</li>
-<li>Gets 1 df contrasts for time and values match</li>
-<li>BUT uses a pooled error to test contrasts. ddf = 64. Appropriate (better?) if sphericity holds but definitely not if it doesn’t!</li>
+<li>Gets 1 df contrasts for time and parameter estimates match</li>
+<li>BUT uses a pooled error to test contrasts. ddf = 64. So p-values Do NOT match. Appropriate (better?) if sphericity holds but definitely not if it doesn’t!</li>
 <li>Does not get main effect (2df) for time</li>
 </ul>
 <div class="cell">
