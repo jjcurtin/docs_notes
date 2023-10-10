@@ -192,6 +192,7 @@ contrasts(d$time)
 ### Using `afex::aov_car`
 
 This provides us with main effect of Time (2 df) with the pooled error term (64 ddf). 
+
 * This is only appropriate if sphericity assumption is met.  
 * Can get corrections to dfs if assumption is violated.  Use `anova()` from stats package
 ```{r}
@@ -267,8 +268,8 @@ car::Anova(m3a, type = 3, test = "F")
 ### lmer approach with regressors for time
 
 * Do NOT include by subject random slope for time because no pseudoreplications
-* Gets 1 df contrasts for time and values match
-* BUT uses a pooled error to test contrasts. ddf = 64.  Appropriate (better?) if sphericity holds but definitely not if it doesn't!
+* Gets 1 df contrasts for time and parameter estimates match
+* BUT uses a pooled error to test contrasts. ddf = 64.  So p-values Do NOT match.  Appropriate (better?) if sphericity holds but definitely not if it doesn't!
 * Does not get main effect (2df) for time
 
 
