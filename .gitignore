@@ -48,3 +48,4 @@ rsconnect/
 docs_arc.Rproj
 
 /.quarto/
+*.Rproj
