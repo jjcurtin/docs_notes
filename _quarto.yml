@@ -21,4 +21,5 @@ book:
   repo-actions: [edit]
   page-navigation: true
   chapters:
+    - index.qmd
     - repeated_measures.qmd

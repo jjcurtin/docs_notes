@@ -1,11 +1,5 @@
----
-title: "LMER vs. lm for repeated measures"
-format:
-    html: 
-       embed-resources: true
-editor_options: 
-  chunk_output_type: console
----
+# Analysis of Repeated Measures in R
+
 This is a long exploration of how to handle repeated measures in R.  It focused primarily on `lm()` vs `lmer()` but also considers `aov_car()` from the afex package.  It is limited to considering a single within subject variable with 2 or 3 levels but the conclusions generalize to models that also include between subject factors.
 
 Conclusions:
@@ -19,7 +13,7 @@ Conclusions:
 If I had psuedoreplications on time, I would prefer the `lmer()` approach with categorical time because we could then model the by subject random slope for time and not worry about the sphericity assumption and stay in long format, etc.  If more levels (than 3) for time, I'd switch to lmer() with random slopes and quantitative time
 
 
-# Load packages and data
+## Load packages and data
 
 ```{r}
 #| message: false
@@ -34,7 +28,7 @@ library(emmeans)
 # path <- here("pilot_partnerchess/mixed_models/sample_data.csv")
 ```
 
-# Long format data
+## Long format data
 ```{r}
 d <- read_csv("repeated_measures.csv", col_types = cols()) |> 
   filter(dyad == "Patient") |> 
@@ -45,7 +39,7 @@ d <- read_csv("repeated_measures.csv", col_types = cols()) |>
 d |> print(n = 20)
 ```
 
-# Setting contrasts for factors
+## Setting contrasts for factors
 
 * see: https://marissabarlaz.github.io/portfolio/contrastcoding/
 * default for unordered factors is treatment/dummy
@@ -59,7 +53,7 @@ d |> print(n = 20)
 ```
 
 
-# Wide format
+## Wide format
 ```{r}
 d_wide <- d |> 
   select(study_id, arm, time, hdd) |> 
@@ -73,11 +67,11 @@ d_wide |> print(n = 20)
 ```
 
 
-# Two level repeated measures IV
+## Two level repeated measures IV
 
 * Use only time 1 and time 2 to demo two level repeated measures analyses
  
-## diff score approach
+### diff score approach
 
 This is the standard/traditional way to analyse this design and the benchmark for comparison
 
@@ -99,7 +93,7 @@ d_wide |>
   summary()
 ```
 
-## lmer approach without random effect of time and c_time as manually coded regressor
+### lmer approach without random effect of time and c_time as manually coded regressor
 
 * This is first option using manually coded regressor for time (time_2v1, 0.5 vs. -0.5)
 * Use random intercept but no random slope for time when there are no [psuedoreplications](https://psyteachr.github.io/stat-models-v1/linear-mixed-effects-models-with-one-random-factor.html) (i.e., where there is only one observation per cell)
@@ -132,7 +126,7 @@ m2a |>
 m2a
 ```
 
-## lmer approach without random effect of time and time as factor
+### lmer approach without random effect of time and time as factor
 
 *  Need to put centered (helmert) contrast on time if you want intercept to match
 ```{r}
@@ -156,7 +150,7 @@ m2b |>
 m2b
 ```
 
-## lmer approach with random effect of time and time as regressor
+### lmer approach with random effect of time and time as regressor
 
 * NOPE!
 * ! number of observations (=66) <= number of random effects (=66) for term (1 + c_time | study_id); the random-effects parameters and the residual variance (or scale parameter) are probably unidentifiable
@@ -170,7 +164,7 @@ d2 |>
 ```
 
 
-# 3 level time variable
+## 3 level time variable
 
 Add regressors for helmert contrasts for three level time variable
 ```{r}
@@ -199,7 +193,7 @@ contrasts(d$time)
 
 
 
-## Using `afex::aov_car`
+### Using `afex::aov_car`
 
 This provides us with main effect of Time (2 df) with the pooled error term (64 ddf). 
 * This is only appropriate if sphericity assumption is met.  
@@ -225,7 +219,7 @@ contrast(means, list(t32v1 = c(-1, .5, .5), t3v2 = c(0,-1,1)))
 ```
 
 
-## Diff score approach
+### Diff score approach
 
 First here are the time contrast models.  
 
@@ -257,7 +251,7 @@ d_wide |>
 ```
 
 
-## lmer approach with time as factor
+### lmer approach with time as factor
 
 * We do NOT include by subject random slope for time because there are no pseudoreplications
 * Gets 2df main effect but not contrasts
@@ -275,7 +269,7 @@ Anova(m3a, type = 3, test = "F")
 
 
 
-## lmer approach with regressors for time
+### lmer approach with regressors for time
 
 * Do NOT include by subject random slope for time because no pseudoreplications
 * Gets 1 df contrasts for time and values match
@@ -291,12 +285,12 @@ m3b
 Anova(m3b, type = 3, test = "F")
 ```
 
-## lmer approach with regressors for time AND separate error terms
+### lmer approach with regressors for time AND separate error terms
 
 I dont show code for this but we could aggregate down to long format but just the two levels of time separately for each time contrast and then we would be back to the 2 level lmer approach to time from above.  This would be fine but its cumbersome so I dont think this is worth it.
 
 
-## With random effect for time
+### With random effect for time
 
 * NOPE
 * ! number of observations (=99) <= number of random effects (=99) for term (1 + time | study_id); the random-effects parameters and the residual variance (or scale parameter) are probably unidentifiable
@@ -309,7 +303,7 @@ d |>
 ```
 
 
-## Lmer with time as continuous variable
+### Lmer with time as continuous variable
 
 Now we can specify by subject random slope for time
 
@@ -341,16 +335,17 @@ Anova(m_center, type = 3, test = "F")
 
 To fit poly model, you probably want to use centered time because linear effect will be at time = 0 (time mid point).  Or chose another sensible 0 point.
 
+```{r}
+d <- d |> 
+  mutate(c_time2 = c_time^2) |> 
+  glimpse()
+```
+
 But you can't fit poly model with quadratic effect with random slopes because, once again cant estimate intercept and both random slopes without more observations per subject
  
 Error: number of observations (=99) <= number of random effects (=99) for term (1 + c_time + c_time2 | study_id); the random-effects parameters and the residual variance (or scale parameter) are probably unidentifiable
 ```{r}
 #| eval: false
-
-d <- d |> 
-  mutate(c_time2 = c_time^2) |> 
-  glimpse()
-
 m_poly <- d |> 
   lmer(hdd ~ c_time + c_time2 + (1 + c_time + c_time2 | study_id), data = _)
 ```
