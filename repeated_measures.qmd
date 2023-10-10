@@ -22,10 +22,6 @@ If I had psuedoreplications on time, I would prefer the `lmer()` approach with c
 library(tidyverse)
 library(lme4)
 library(car)
-library(here)
-library(afex)
-library(emmeans)
-# path <- here("pilot_partnerchess/mixed_models/sample_data.csv")
 ```
 
 ## Long format data
@@ -121,7 +117,7 @@ m2a <- d2 |>
   lmer(hdd ~ time_2v1 + (1 | study_id), data = _)
 
 m2a |> 
-  Anova(type = 3, test = "F")
+  car::Anova(type = 3, test = "F")
 
 m2a
 ```
@@ -145,7 +141,7 @@ m2b <- d2 |>
   lmer(hdd ~ time + (1 | study_id), data = _)
 
 m2b |> 
-  Anova(type = 3, test = "F")
+  car::Anova(type = 3, test = "F")
 
 m2b
 ```
@@ -160,7 +156,7 @@ m2b
 
 d2 |> 
   lmer(hdd ~ c_time + (1 + c_time | study_id), data = _) |> 
-  Anova(type = 3, test = "F")
+  car::Anova(type = 3, test = "F")
 ```
 
 
@@ -197,7 +193,7 @@ contrasts(d$time)
 
 This provides us with main effect of Time (2 df) with the pooled error term (64 ddf). 
 * This is only appropriate if sphericity assumption is met.  
-* Can get corrections to dfs if assumption is violated.
+* Can get corrections to dfs if assumption is violated.  Use `anova()` from stats package
 ```{r}
 m_afex <- d |> 
   afex::aov_car(hdd ~ time + Error(study_id/time), data = _)
@@ -214,8 +210,8 @@ We can use emmeans package to get cell means and 1 df contrasts
 * This ALSO gives use tests of contrasts with SEPARATE, not POOLED error (note ddf = 32)
 * We want separate error because no assumption of sphericity needed
 ```{r}
-(means <- emmeans(m_afex, ~ time))
-contrast(means, list(t32v1 = c(-1, .5, .5), t3v2 = c(0,-1,1))) 
+(means <- emmeans::emmeans(m_afex, ~ time))
+emmeans::contrast(means, list(t32v1 = c(-1, .5, .5), t3v2 = c(0,-1,1))) 
 ```
 
 
@@ -263,8 +259,7 @@ m3a<- d |>
   lmer(hdd ~ time + (1 | study_id), data = _)
 
 m3a
-Anova(m3a, type = 3, test = "F")
-# anova(m3a)
+car::Anova(m3a, type = 3, test = "F")
 ```
 
 
@@ -282,7 +277,7 @@ m3b <- d |>
   lme4::lmer(hdd ~ time_32v1 + time_3v2 + (1 | study_id), data = _)
 
 m3b
-Anova(m3b, type = 3, test = "F")
+car::Anova(m3b, type = 3, test = "F")
 ```
 
 ### lmer approach with regressors for time AND separate error terms
@@ -321,7 +316,7 @@ m_raw <- d |>
   lmer(hdd ~ r_time + (1 + r_time | study_id), data = _)
 
 m_raw
-Anova(m_raw, type = 3, test = "F")
+car::Anova(m_raw, type = 3, test = "F")
 ```
 
 Centering matters - here only for intercept but more impacts with higher order models
@@ -330,7 +325,7 @@ m_center <- d |>
   lmer(hdd ~ c_time + (1 + c_time | study_id), data = _)
 
 m_center
-Anova(m_center, type = 3, test = "F")
+car::Anova(m_center, type = 3, test = "F")
 ```
 
 To fit poly model, you probably want to use centered time because linear effect will be at time = 0 (time mid point).  Or chose another sensible 0 point.
@@ -356,5 +351,5 @@ m_poly <- d |>
   lmer(hdd ~ c_time + c_time2 + (1 | study_id), data = _)
 
 m_poly
-Anova(m_poly, type = 3, test = "F")
+car::Anova(m_poly, type = 3, test = "F")
 ```
