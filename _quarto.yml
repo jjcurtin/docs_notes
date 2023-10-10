@@ -12,9 +12,8 @@ toc-depth: 3
 # bibliography: references.bib
 
 book:
-  title: "Documentation for ARC"
-  author:
-  - John J. Curtin, PhD
+  title: "John Curtin's Stats and Coding Notebook"
+  author: John J. Curtin, PhD
   site-url: https://github.io/jjcurtin/docs_notes
   repo-url: https://github.com/jjcurtin/docs_notes
   repo-branch: main

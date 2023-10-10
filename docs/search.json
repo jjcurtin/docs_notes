@@ -1,5 +1,12 @@
 [
   {
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
+    "title": "John Curtin’s Stats and Coding Notebook",
+    "section": "Welcome",
+    "text": "Welcome\nThis web book is a collection of John Curtin’s exploration of stats and coding issues. These chapters are mostly for John and not intended for external use though John may occasionally share it with colleagues to stimulate discussion and debate."
+  },
+  {
     "objectID": "repeated_measures.html#load-packages-and-data",
     "href": "repeated_measures.html#load-packages-and-data",
     "title": "1  Analysis of Repeated Measures in R",

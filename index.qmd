@@ -1,4 +1,4 @@
 ## Welcome {.unnumbered}
 
-This web book is a collection of John Curtin's exploration of stats and coding issues.  These chapters are mostly for John and not intended for external use though John may occassionally share it with colleagues to stimulate discussion and debate.
+This web book is a collection of John Curtin's exploration of stats and coding issues.  These chapters are mostly for John and not intended for external use though John may occasionally share it with colleagues to stimulate discussion and debate.
 
