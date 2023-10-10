@@ -184,7 +184,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#two-level-repeated-measures-iv" id="toc-two-level-repeated-measures-iv" class="nav-link" data-scroll-target="#two-level-repeated-measures-iv"><span class="toc-section-number">1.5</span>  Two level repeated measures IV</a>
   <ul class="collapse">
   <li><a href="#diff-score-approach" id="toc-diff-score-approach" class="nav-link" data-scroll-target="#diff-score-approach"><span class="toc-section-number">1.5.1</span>  diff score approach</a></li>
-  <li><a href="#lmer-approach-without-random-effect-of-time-and-c_time-as-manually-coded-regressor" id="toc-lmer-approach-without-random-effect-of-time-and-c_time-as-manually-coded-regressor" class="nav-link" data-scroll-target="#lmer-approach-without-random-effect-of-time-and-c_time-as-manually-coded-regressor"><span class="toc-section-number">1.5.2</span>  lmer approach without random effect of time and c_time as manually coded regressor</a></li>
+  <li><a href="#lmer-approach-without-random-effect-of-time-and-time-as-manually-coded-regressor" id="toc-lmer-approach-without-random-effect-of-time-and-time-as-manually-coded-regressor" class="nav-link" data-scroll-target="#lmer-approach-without-random-effect-of-time-and-time-as-manually-coded-regressor"><span class="toc-section-number">1.5.2</span>  lmer approach without random effect of time and time as manually coded regressor</a></li>
   <li><a href="#lmer-approach-without-random-effect-of-time-and-time-as-factor" id="toc-lmer-approach-without-random-effect-of-time-and-time-as-factor" class="nav-link" data-scroll-target="#lmer-approach-without-random-effect-of-time-and-time-as-factor"><span class="toc-section-number">1.5.3</span>  lmer approach without random effect of time and time as factor</a></li>
   <li><a href="#lmer-approach-with-random-effect-of-time-and-time-as-regressor" id="toc-lmer-approach-with-random-effect-of-time-and-time-as-regressor" class="nav-link" data-scroll-target="#lmer-approach-with-random-effect-of-time-and-time-as-regressor"><span class="toc-section-number">1.5.4</span>  lmer approach with random effect of time and time as regressor</a></li>
   </ul></li>
@@ -196,7 +196,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#lmer-approach-with-regressors-for-time" id="toc-lmer-approach-with-regressors-for-time" class="nav-link" data-scroll-target="#lmer-approach-with-regressors-for-time"><span class="toc-section-number">1.6.4</span>  lmer approach with regressors for time</a></li>
   <li><a href="#lmer-approach-with-regressors-for-time-and-separate-error-terms" id="toc-lmer-approach-with-regressors-for-time-and-separate-error-terms" class="nav-link" data-scroll-target="#lmer-approach-with-regressors-for-time-and-separate-error-terms"><span class="toc-section-number">1.6.5</span>  lmer approach with regressors for time AND separate error terms</a></li>
   <li><a href="#with-random-effect-for-time" id="toc-with-random-effect-for-time" class="nav-link" data-scroll-target="#with-random-effect-for-time"><span class="toc-section-number">1.6.6</span>  With random effect for time</a></li>
-  <li><a href="#lmer-with-time-as-continuous-variable" id="toc-lmer-with-time-as-continuous-variable" class="nav-link" data-scroll-target="#lmer-with-time-as-continuous-variable"><span class="toc-section-number">1.6.7</span>  Lmer with time as continuous variable</a></li>
+  <li><a href="#lmer-with-time-as-continuous-variable" id="toc-lmer-with-time-as-continuous-variable" class="nav-link" data-scroll-target="#lmer-with-time-as-continuous-variable"><span class="toc-section-number">1.6.7</span>  lmer with time as continuous variable</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/jjcurtin/docs_notes/edit/main/repeated_measures.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
@@ -420,8 +420,8 @@ Residual standard error: 32.88 on 32 degrees of freedom</code></pre>
 </div>
 </div>
 </section>
-<section id="lmer-approach-without-random-effect-of-time-and-c_time-as-manually-coded-regressor" class="level3" data-number="1.5.2">
-<h3 data-number="1.5.2" class="anchored" data-anchor-id="lmer-approach-without-random-effect-of-time-and-c_time-as-manually-coded-regressor"><span class="header-section-number">1.5.2</span> lmer approach without random effect of time and c_time as manually coded regressor</h3>
+<section id="lmer-approach-without-random-effect-of-time-and-time-as-manually-coded-regressor" class="level3" data-number="1.5.2">
+<h3 data-number="1.5.2" class="anchored" data-anchor-id="lmer-approach-without-random-effect-of-time-and-time-as-manually-coded-regressor"><span class="header-section-number">1.5.2</span> lmer approach without random effect of time and time as manually coded regressor</h3>
 <ul>
 <li>This is first option using manually coded regressor for time (time_2v1, 0.5 vs.&nbsp;-0.5)</li>
 <li>Use random intercept but no random slope for time when there are no <a href="https://psyteachr.github.io/stat-models-v1/linear-mixed-effects-models-with-one-random-factor.html">psuedoreplications</a> (i.e., where there is only one observation per cell)</li>
@@ -915,9 +915,9 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </section>
 <section id="lmer-with-time-as-continuous-variable" class="level3" data-number="1.6.7">
-<h3 data-number="1.6.7" class="anchored" data-anchor-id="lmer-with-time-as-continuous-variable"><span class="header-section-number">1.6.7</span> Lmer with time as continuous variable</h3>
+<h3 data-number="1.6.7" class="anchored" data-anchor-id="lmer-with-time-as-continuous-variable"><span class="header-section-number">1.6.7</span> lmer with time as continuous variable</h3>
 <p>Now we can specify by subject random slope for time</p>
-<p>And this model doesnt make sphericity assumption because it allows for the slopes to vary by subject</p>
+<p>And this model doesn’t make sphericity assumption because it allows for the slopes to vary by subject</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> d <span class="sc">|&gt;</span> </span>
 <span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">r_time =</span> <span class="fu">as.numeric</span>(time),</span>
