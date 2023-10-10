@@ -1,0 +1,365 @@
+---
+title: "LMER vs. lm for repeated measures"
+format:
+    html: 
+       embed-resources: true
+editor_options: 
+  chunk_output_type: console
+---
+This is a long exploration of how to handle repeated measures in R.  It focused primarily on `lm()` vs `lmer()` but also considers `aov_car()` from the afex package.  It is limited to considering a single within subject variable with 2 or 3 levels but the conclusions generalize to models that also include between subject factors.
+
+Conclusions:
+
+* I prefer simple `lm()` with difference scores for 2 and 3 level time variable if I don't need/want to test main effect (2df) of time (which is suspect anyway) and I do want 1df time contrasts.  [If I really need the main effect test, use `aov_car()`].  
+
+* HOWEVER, `aov_car()` should be considered.  It gives same 1df contrasts  (using `emmeans` package).  It does give main effect of time with corrections for violations if desired and it allows you to keep data in long format!  Not sure (not tested) if it could handle quantitiave between subject factors like lm() can.
+
+`lmer()` with time as quantitative variable is preferred if I can focus on only the linear effect (assuming 3 levels) and particularly if I have missing data or timepoints that vary by participant.  If I had more time points and could also get quad, this might be better than lm() too because simpler than the many contrast possible with 4 levels of time.
+
+If I had psuedoreplications on time, I would prefer the `lmer()` approach with categorical time because we could then model the by subject random slope for time and not worry about the sphericity assumption and stay in long format, etc.  If more levels (than 3) for time, I'd switch to lmer() with random slopes and quantitative time
+
+
+# Load packages and data
+
+```{r}
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(lme4)
+library(car)
+library(here)
+library(afex)
+library(emmeans)
+# path <- here("pilot_partnerchess/mixed_models/sample_data.csv")
+```
+
+# Long format data
+```{r}
+d <- read_csv("repeated_measures.csv", col_types = cols()) |> 
+  filter(dyad == "Patient") |> 
+  select(-dyad) |> 
+  filter(time > 0) |> 
+  glimpse()
+
+d |> print(n = 20)
+```
+
+# Setting contrasts for factors
+
+* see: https://marissabarlaz.github.io/portfolio/contrastcoding/
+* default for unordered factors is treatment/dummy
+* we typically want centered orthogonal.  Helmert often good choice
+* below, we demo how to set up contrasts however you like by code
+* We will apply them later as needed
+* We make helmert contrast matrices for 2 and 3 level factors here
+```{r}
+(helmert2 = matrix(c(-.5, .5), ncol = 1, dimnames = list(c(1,2), c("t2v1"))))
+(helmert3 = matrix(c(-2/3, 1/3, 1/3, 0, -.5, .5), ncol = 2, dimnames = list(c(1,2,3), c("t32v1", "t3v2"))))
+```
+
+
+# Wide format
+```{r}
+d_wide <- d |> 
+  select(study_id, arm, time, hdd) |> 
+  pivot_wider(names_from = time, values_from = hdd) |> 
+  rename(time1 = `1`,
+         time2 = `2`, 
+         time3 = `3`) |> 
+  glimpse()
+
+d_wide |> print(n = 20)
+```
+
+
+# Two level repeated measures IV
+
+* Use only time 1 and time 2 to demo two level repeated measures analyses
+ 
+## diff score approach
+
+This is the standard/traditional way to analyse this design and the benchmark for comparison
+
+* Time effect tested using difference score for time2 - time1
+* No assumption of sphericity is needed
+```{r}
+
+d_wide |> 
+  mutate(diff = time2 - time1) |> 
+  lm(diff ~ 1, data = _) |> 
+  summary()
+```
+
+If you wanted to test the intercept in the between subject model you could do this. 
+```{r}
+d_wide |> 
+  mutate(ave = (time2 + time1) / 2) |> 
+  lm(ave ~ 1, data = _) |> 
+  summary()
+```
+
+## lmer approach without random effect of time and c_time as manually coded regressor
+
+* This is first option using manually coded regressor for time (time_2v1, 0.5 vs. -0.5)
+* Use random intercept but no random slope for time when there are no [psuedoreplications](https://psyteachr.github.io/stat-models-v1/linear-mixed-effects-models-with-one-random-factor.html) (i.e., where there is only one observation per cell)
+* Use `Anova()` from car package
+
+
+First format data for two level example and code regressor.  
+
+```{r}
+d2 <- d |> 
+  filter(time < 3) |>   
+  mutate(time_2v1 = if_else(time == 1, -.5, .5)) |>
+  glimpse()
+
+d2 |> print(n = 20)
+```
+
+Then do analysis. 
+
+* Do NOT use by subject random slope for time.
+* P value for time (and intercept) matches traditional analysis
+* both parameter estimates match above as well
+```{r}
+m2a <- d2 |> 
+  lmer(hdd ~ time_2v1 + (1 | study_id), data = _)
+
+m2a |> 
+  Anova(type = 3, test = "F")
+
+m2a
+```
+
+## lmer approach without random effect of time and time as factor
+
+*  Need to put centered (helmert) contrast on time if you want intercept to match
+```{r}
+d2 <- d2 |> 
+  mutate(time = factor(time, labels = c("time1", "time2")))
+
+contrasts(d2$time)
+contrasts(d2$time) <- helmert2
+contrasts(d2$time)
+```
+
+* Do NOT use by subject random slope for time
+* Coefficients and p-values match
+```{r}
+m2b <- d2 |> 
+  lmer(hdd ~ time + (1 | study_id), data = _)
+
+m2b |> 
+  Anova(type = 3, test = "F")
+
+m2b
+```
+
+## lmer approach with random effect of time and time as regressor
+
+* NOPE!
+* ! number of observations (=66) <= number of random effects (=66) for term (1 + c_time | study_id); the random-effects parameters and the residual variance (or scale parameter) are probably unidentifiable
+* This WOULD be correct if we had psudeoreplications
+```{r}
+#| eval: false
+
+d2 |> 
+  lmer(hdd ~ c_time + (1 + c_time | study_id), data = _) |> 
+  Anova(type = 3, test = "F")
+```
+
+
+# 3 level time variable
+
+Add regressors for helmert contrasts for three level time variable
+```{r}
+d <- d |> 
+  mutate(time_32v1 = case_match(time,
+                                c(1) ~ -2/3,
+                                c(2, 3) ~ 1/3),
+         time_3v2 = case_match(time, 
+                               c(1) ~ 0,
+                               c(2) ~ -.5,
+                               c(3) ~ .5))
+
+d |> print(n = 20)
+```
+
+Set up 3-level time as a factor with helmert contrasts
+
+```{r}
+d <- d |> 
+  mutate(time = factor(time, labels = c("time1", "time2", "time3")))
+
+contrasts(d$time)
+contrasts(d$time) <- helmert3
+contrasts(d$time)
+```
+
+
+
+## Using `afex::aov_car`
+
+This provides us with main effect of Time (2 df) with the pooled error term (64 ddf). 
+* This is only appropriate if sphericity assumption is met.  
+* Can get corrections to dfs if assumption is violated.
+```{r}
+m_afex <- d |> 
+  afex::aov_car(hdd ~ time + Error(study_id/time), data = _)
+
+summary(m_afex)
+anova(m_afex, correction = "none")
+anova(m_afex, correction = "GG")
+anova(m_afex, correction = "HF")
+```
+
+We can use emmeans package to get cell means and 1 df contrasts
+
+* note the formula for the mean contrasts it NOT the helmert coefficients, but the actual algebraic formula for the contrasts we want.
+* This ALSO gives use tests of contrasts with SEPARATE, not POOLED error (note ddf = 32)
+* We want separate error because no assumption of sphericity needed
+```{r}
+(means <- emmeans(m_afex, ~ time))
+contrast(means, list(t32v1 = c(-1, .5, .5), t3v2 = c(0,-1,1))) 
+```
+
+
+## Diff score approach
+
+First here are the time contrast models.  
+
+* CRITICALLY, this tests contrasts with SEPARATE (rather than pooled) error.  Note ddf = 32 for contrasts
+* This matches contrasts from `aov_car()`
+* This method does not provide test of main effect of time (2 df)
+
+```{r}
+d_wide |> 
+  mutate(diff_23v1 = (time2 + time3) / 2 - time1) |> 
+  lm(diff_23v1 ~ 1, data = _) |> 
+  summary()
+
+d_wide |>
+  mutate(diff_3v2 = time3 - time2) |> 
+  lm(diff_3v2 ~ 1, data = _) |> 
+  summary()
+```
+
+
+And here is the main effects model for the intercept for time
+
+```{r}
+d_wide |> 
+  mutate(ave = (time1 + time2 + time3) / 3) |> 
+  lm(ave ~ 1, data = _) |> 
+  summary()
+
+```
+
+
+## lmer approach with time as factor
+
+* We do NOT include by subject random slope for time because there are no pseudoreplications
+* Gets 2df main effect but not contrasts
+* Matches main effect results from `aov_car()`
+* BUT not appropriate if sphericity is not met
+* And you would need to got to `aov_car()` or similar to test for sphericity and get corrections if needed.  NOT A GOOD SOLUTION
+```{r}
+m3a<- d |> 
+  lmer(hdd ~ time + (1 | study_id), data = _)
+
+m3a
+Anova(m3a, type = 3, test = "F")
+# anova(m3a)
+```
+
+
+
+## lmer approach with regressors for time
+
+* Do NOT include by subject random slope for time because no pseudoreplications
+* Gets 1 df contrasts for time and values match
+* BUT uses a pooled error to test contrasts. ddf = 64.  Appropriate (better?) if sphericity holds but definitely not if it doesn't!
+* Does not get main effect (2df) for time
+
+
+```{r}
+m3b <- d |> 
+  lme4::lmer(hdd ~ time_32v1 + time_3v2 + (1 | study_id), data = _)
+
+m3b
+Anova(m3b, type = 3, test = "F")
+```
+
+## lmer approach with regressors for time AND separate error terms
+
+I dont show code for this but we could aggregate down to long format but just the two levels of time separately for each time contrast and then we would be back to the 2 level lmer approach to time from above.  This would be fine but its cumbersome so I dont think this is worth it.
+
+
+## With random effect for time
+
+* NOPE
+* ! number of observations (=99) <= number of random effects (=99) for term (1 + time | study_id); the random-effects parameters and the residual variance (or scale parameter) are probably unidentifiable
+* Again, no pseudoreplications so no by-subject random effect for time can be estimated 
+```{r}
+#| eval: false
+
+d |> 
+  lmer(hdd ~ time + (1 + time | study_id), data = _)
+```
+
+
+## Lmer with time as continuous variable
+
+Now we can specify by subject random slope for time
+
+And this model doesnt make sphericity assumption because it allows for the slopes to vary by subject
+
+```{r}
+d <- d |> 
+  mutate(r_time = as.numeric(time),
+         c_time = r_time - 2) |> 
+  glimpse()
+```
+
+```{r}
+m_raw <- d |> 
+  lmer(hdd ~ r_time + (1 + r_time | study_id), data = _)
+
+m_raw
+Anova(m_raw, type = 3, test = "F")
+```
+
+Centering matters - here only for intercept but more impacts with higher order models
+```{r}
+m_center <- d |> 
+  lmer(hdd ~ c_time + (1 + c_time | study_id), data = _)
+
+m_center
+Anova(m_center, type = 3, test = "F")
+```
+
+To fit poly model, you probably want to use centered time because linear effect will be at time = 0 (time mid point).  Or chose another sensible 0 point.
+
+But you can't fit poly model with quadratic effect with random slopes because, once again cant estimate intercept and both random slopes without more observations per subject
+ 
+Error: number of observations (=99) <= number of random effects (=99) for term (1 + c_time + c_time2 | study_id); the random-effects parameters and the residual variance (or scale parameter) are probably unidentifiable
+```{r}
+#| eval: false
+
+d <- d |> 
+  mutate(c_time2 = c_time^2) |> 
+  glimpse()
+
+m_poly <- d |> 
+  lmer(hdd ~ c_time + c_time2 + (1 + c_time + c_time2 | study_id), data = _)
+```
+ 
+But you CAN return to not estimating by subject random slopes.  I suspect that this has the same sphericity issue though!
+```{r}
+m_poly <- d |> 
+  lmer(hdd ~ c_time + c_time2 + (1 | study_id), data = _)
+
+m_poly
+Anova(m_poly, type = 3, test = "F")
+```

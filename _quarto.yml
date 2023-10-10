@@ -1,0 +1,24 @@
+project:
+  type: book
+  output-dir: docs
+
+execute:
+  echo: true
+  warning: false
+  message: false
+
+toc: true
+toc-depth: 3
+# bibliography: references.bib
+
+book:
+  title: "Documentation for ARC"
+  author:
+  - John J. Curtin, PhD
+  site-url: https://github.io/jjcurtin/docs_notes
+  repo-url: https://github.com/jjcurtin/docs_notes
+  repo-branch: main
+  repo-actions: [edit]
+  page-navigation: true
+  chapters:
+    - repeated_measures.qmd
