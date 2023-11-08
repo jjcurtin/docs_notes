@@ -433,3 +433,24 @@ m_poly
 m_poly |> 
   car::Anova(type = 3, test = "F")
 ```
+
+# Predicted values and figures
+
+This is a demo of predicted values and plot for the model with time as a continuous variable.  I use the linear model of time and raw time scores.   For the plot, centering doesn't matter.  Its all the same model space and it easier to understand in raw time units.  Alternatively, we could use centered time and then change the values on the axis that displays time.
+```{r}
+# we can add the means from raw data to plot and then superimpose the fitted model
+d_plot <- d_long |> 
+  group_by(r_time) |> 
+  summarize(hdd_mean = mean(hdd), hdd_sd = sd(hdd)) |> 
+  mutate(study_id = 999)
+
+d_plot <- d_plot |> 
+  mutate(hdd_pred = predict(m_raw, newdata = d_plot, allow.new.levels = TRUE)) |> 
+  glimpse()
+
+d_plot |> 
+  ggplot(aes(x = r_time)) +
+    geom_point(aes(y = hdd_mean)) +
+    geom_line(aes(y = hdd_pred), color = "red", linewidth = 2) 
+```
+
