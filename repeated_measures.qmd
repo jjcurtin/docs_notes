@@ -380,7 +380,7 @@ And this model doesn't make sphericity assumption because it allows for the slop
 
 ```{r}
 d_long <- d_long |> 
-  mutate(r_time = as.numeric(time),
+  mutate(r_time = as.numeric(time) * 2,  # for 2, 4, and 6 months
          c_time = r_time - 2) |> 
   glimpse()
 ```
@@ -441,16 +441,17 @@ This is a demo of predicted values and plot for the model with time as a continu
 # we can add the means from raw data to plot and then superimpose the fitted model
 d_plot <- d_long |> 
   group_by(r_time) |> 
-  summarize(hdd_mean = mean(hdd), hdd_sd = sd(hdd)) |> 
-  mutate(study_id = 999)
+  summarize(hdd_mean = mean(hdd), hdd_se = sd(hdd)/ sqrt(length(hdd)))
 
 d_plot <- d_plot |> 
-  mutate(hdd_pred = predict(m_raw, newdata = d_plot, allow.new.levels = TRUE)) |> 
+  mutate(hdd_pred = predict(m_raw, newdata = d_plot, re.form = NA)) |> 
   glimpse()
 
 d_plot |> 
   ggplot(aes(x = r_time)) +
+    geom_errorbar(aes(ymin = hdd_mean - hdd_se, ymax = hdd_mean + hdd_se),
+                  width = .25) +
     geom_point(aes(y = hdd_mean)) +
-    geom_line(aes(y = hdd_pred), color = "red", linewidth = 2) 
+    geom_line(aes(y = hdd_pred), color = "red", linewidth = 1.5) +
+    ylim(0, 50)
 ```
-
