@@ -49,7 +49,7 @@ pp <- auc |>
          # prior_intercept = rstanarm::student_t(autoscale = TRUE),
          # prior = rstanarm::student_t(autoscale = TRUE),
          # hetero_var = TRUE,
-         transform = tidyposterior::logit_trans,  # for skewed & bounded AUC
+         # transform = tidyposterior::logit_trans,  # for skewed & bounded AUC
          iter = 2000, chains = 4, # defaults listed here for easy increase  
          adapt_delta = .99,   # default = .80.  Increase to < 1
          # cores = 4, seed = 12345,
