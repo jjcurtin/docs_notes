@@ -10,6 +10,7 @@ library(tidyverse)
 library(tidymodels)
 library(tidyposterior)
 library(rstanarm)
+library(broom.mixed)
 ```
 
 Make fake data
@@ -51,7 +52,7 @@ pp <- auc |>
          # hetero_var = TRUE,
          # transform = tidyposterior::logit_trans,  # for skewed & bounded AUC
          iter = 2000, chains = 4, # defaults listed here for easy increase  
-         adapt_delta = .99,   # default = .80.  Increase to < 1
+         adapt_delta = .80,   # default = .80.  Increase to < 1
          # cores = 4, seed = 12345,
          family = gaussian, 
 )  
@@ -101,6 +102,13 @@ summary(pp_contrasts, size = .01, prob = 0.95)
 ```
 
 Directional contrast (vs 0)
+
+* set size = 0
+```{r}
+summary(pp_contrasts, size = 0, prob = 0.95)
+```
+
+Here is the more "manual" method.  Useful for understanding.
 ```{r}
 pp_contrasts |> 
   filter(contrast == "auc_1 vs. auc_2") |> 
@@ -147,22 +155,47 @@ auc_long <- auc |>
     values_to = "auc") |> 
   rename(id = repeat_id,
          id2 = fold_id) |> 
-  mutate(model_1 = if_else(model == "auc_1", 1, 0),
-         model_2 = if_else(model == "auc_2", 1, 0))
+  mutate(model_2 = if_else(model == "auc_2", 1, 0),
+         model_3 = if_else(model == "auc_3", 1, 0),
+         model = fct(model, levels = c("auc_1", "auc_2", "auc_3")))
 ```
 
 ```{r}
 set.seed(101)
-pp_2 <- auc_long |> 
+pp2 <- auc_long |> 
   stan_glmer(data = _,
-             formula = auc ~ model_1 + model_2 + (1 | id2/id),
+             formula = auc ~ model_2 + model_3 + (1 | id2/id),
          # prior_intercept = rstanarm::student_t(autoscale = TRUE),
          # prior = rstanarm::student_t(autoscale = TRUE),
          # hetero_var = TRUE,
          # transform = tidyposterior::logit_trans,  # for skewed & bounded AUC
          iter = 2000, chains = 4, # defaults listed here for easy increase  
-         adapt_delta = .99,   # default = .80.  Increase to < 1
+         adapt_delta = .80,   # default = .80.  Increase to < 1
          # cores = 4, seed = 12345,
          family = gaussian, 
 )  
+```
+
+Make new data for posterior prediction
+```{r}
+new_dat2 <- tibble(id = c(1,1,1), id2 = c(1,1,1), 
+                   model_2 = c(0,1,0),
+                   model_3 = c(0,0,1))
+```
+ 
+```{r} 
+pp2_tidy <- posterior_epred(pp2, newdata = new_dat2, seed = 123, re.form = NA) |> 
+  as_tibble()
+names(pp2_tidy) <- c("auc_1", "auc_2", "auc_3") 
+
+pp2_tidy <- pp2_tidy |> 
+ pivot_longer(everything(), names_to = "model", values_to = "posterior")
+
+class(pp2_tidy) <- c("posterior", class(pp2_tidy))
+```
+
+Compare
+```{r}
+pp_tidy |> head()
+pp2_tidy |> head()
 ```
