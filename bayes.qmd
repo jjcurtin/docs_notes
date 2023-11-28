@@ -1,8 +1,8 @@
 ---
-title: "Untitled"
 editor_options: 
   chunk_output_type: console
 ---
+# Bayesian Analyses with rstanarm
 
 ## Set up packages and fake data
 ```{r}
@@ -56,6 +56,13 @@ pp <- auc |>
          # cores = 4, seed = 12345,
          family = gaussian, 
 )  
+```
+
+Model coefficients
+```{r}
+pp$stan |> summary(pars = c("modelauc_2", "modelauc_3"),
+        probs = c(0.025, 0.975),
+        digits = 2) 
 ```
 
 
@@ -158,8 +165,11 @@ auc_long <- auc |>
   mutate(model_2 = if_else(model == "auc_2", 1, 0),
          model_3 = if_else(model == "auc_3", 1, 0),
          model = fct(model, levels = c("auc_1", "auc_2", "auc_3")))
+
+auc_long |> head()
 ```
 
+Fix model directly with `stan_glmer()`
 ```{r}
 set.seed(101)
 pp2 <- auc_long |> 
@@ -181,6 +191,8 @@ Make new data for posterior prediction
 new_dat2 <- tibble(id = c(1,1,1), id2 = c(1,1,1), 
                    model_2 = c(0,1,0),
                    model_3 = c(0,0,1))
+
+new_dat2 |> print(n = 3)
 ```
  
 ```{r} 
@@ -199,3 +211,15 @@ Compare
 pp_tidy |> head()
 pp2_tidy |> head()
 ```
+
+
+## Transformations
+
+Can use transformations in tidyposterior package
+
+`tidyposterior::logit_trans` is useful for auROC
+
+* apply transform to raw data (auROCs) - `logit_trans$func()`
+* fit model
+* get posterior
+* apply inverse transform to posterior - `logit_trans$inv()`
