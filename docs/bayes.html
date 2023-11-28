@@ -196,7 +196,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyposterior)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstanarm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstanarm)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Make fake data</p>
 <div class="cell">
@@ -256,9 +257,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>         <span class="co"># prior_intercept = rstanarm::student_t(autoscale = TRUE),</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>         <span class="co"># prior = rstanarm::student_t(autoscale = TRUE),</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>         <span class="co"># hetero_var = TRUE,</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">transform =</span> tidyposterior<span class="sc">::</span>logit_trans,  <span class="co"># for skewed &amp; bounded AUC</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>         <span class="co"># transform = tidyposterior::logit_trans,  # for skewed &amp; bounded AUC</span></span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">iter =</span> <span class="dv">2000</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="co"># defaults listed here for easy increase  </span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">adapt_delta =</span> .<span class="dv">99</span>,   <span class="co"># default = .80.  Increase to &lt; 1</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">adapt_delta =</span> .<span class="dv">80</span>,   <span class="co"># default = .80.  Increase to &lt; 1</span></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>         <span class="co"># cores = 4, seed = 12345,</span></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">family =</span> gaussian, </span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -266,8 +267,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 7.4e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.74 seconds.
+Chain 1: Gradient evaluation took 8.4e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.84 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -284,15 +285,15 @@ Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 2.234 seconds (Warm-up)
-Chain 1:                1.083 seconds (Sampling)
-Chain 1:                3.317 seconds (Total)
+Chain 1:  Elapsed Time: 6.685 seconds (Warm-up)
+Chain 1:                0.423 seconds (Sampling)
+Chain 1:                7.108 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 2).
 Chain 2: 
-Chain 2: Gradient evaluation took 2.9e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.29 seconds.
+Chain 2: Gradient evaluation took 3.2e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.32 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
@@ -309,15 +310,15 @@ Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 1.93 seconds (Warm-up)
-Chain 2:                1.015 seconds (Sampling)
-Chain 2:                2.945 seconds (Total)
+Chain 2:  Elapsed Time: 5.918 seconds (Warm-up)
+Chain 2:                0.524 seconds (Sampling)
+Chain 2:                6.442 seconds (Total)
 Chain 2: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 3).
 Chain 3: 
-Chain 3: Gradient evaluation took 2.9e-05 seconds
-Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.29 seconds.
+Chain 3: Gradient evaluation took 2.7e-05 seconds
+Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.27 seconds.
 Chain 3: Adjust your expectations accordingly!
 Chain 3: 
 Chain 3: 
@@ -334,15 +335,15 @@ Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 3: 
-Chain 3:  Elapsed Time: 2.03 seconds (Warm-up)
-Chain 3:                0.605 seconds (Sampling)
-Chain 3:                2.635 seconds (Total)
+Chain 3:  Elapsed Time: 6.31 seconds (Warm-up)
+Chain 3:                0.383 seconds (Sampling)
+Chain 3:                6.693 seconds (Total)
 Chain 3: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 4).
 Chain 4: 
-Chain 4: Gradient evaluation took 2.6e-05 seconds
-Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.26 seconds.
+Chain 4: Gradient evaluation took 2.8e-05 seconds
+Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.28 seconds.
 Chain 4: Adjust your expectations accordingly!
 Chain 4: 
 Chain 4: 
@@ -359,9 +360,9 @@ Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 1.923 seconds (Warm-up)
-Chain 4:                0.735 seconds (Sampling)
-Chain 4:                2.658 seconds (Total)
+Chain 4:  Elapsed Time: 6.63 seconds (Warm-up)
+Chain 4:                0.522 seconds (Sampling)
+Chain 4:                7.152 seconds (Total)
 Chain 4: </code></pre>
 </div>
 </div>
@@ -373,21 +374,21 @@ Chain 4: </code></pre>
 ------
 Intercept (after predictors centered)
   Specified prior:
-    ~ normal(location = 1.9, scale = 2.5)
+    ~ normal(location = 0.87, scale = 2.5)
   Adjusted prior:
-    ~ normal(location = 1.9, scale = 0.67)
+    ~ normal(location = 0.87, scale = 0.071)
 
 Coefficients
   Specified prior:
     ~ normal(location = [0,0], scale = [2.5,2.5])
   Adjusted prior:
-    ~ normal(location = [0,0], scale = [1.41,1.41])
+    ~ normal(location = [0,0], scale = [0.15,0.15])
 
 Auxiliary (sigma)
   Specified prior:
     ~ exponential(rate = 1)
   Adjusted prior:
-    ~ exponential(rate = 3.7)
+    ~ exponential(rate = 35)
 
 Covariance
  ~ decov(reg. = 1, conc. = 1, shape = 1, scale = 1)
@@ -417,9 +418,9 @@ See help('prior_summary.stanreg') for more details</code></pre>
 <pre><code># A tibble: 3 × 5
   model  mean median lower upper
   &lt;fct&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 auc_1 0.904  0.904 0.901 0.907
-2 auc_2 0.847  0.847 0.843 0.852
-3 auc_3 0.848  0.848 0.843 0.853</code></pre>
+1 auc_1 0.904  0.904 0.900 0.908
+2 auc_2 0.847  0.847 0.843 0.851
+3 auc_3 0.848  0.848 0.844 0.852</code></pre>
 </div>
 </div>
 <p>Model contrasts</p>
@@ -439,53 +440,69 @@ See help('prior_summary.stanreg') for more details</code></pre>
 <pre><code># A tibble: 3 × 9
   contrast     probability     mean    lower   upper  size pract_neg pract_equiv
   &lt;chr&gt;              &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
-1 auc_1 vs au…       1      5.71e-2  0.0522  0.0619   0.01     0           0    
-2 auc_1 vs au…       1      5.65e-2  0.0515  0.0613   0.01     0           0    
-3 auc_2 vs au…       0.424 -6.02e-4 -0.00657 0.00538  0.01     0.001       0.999
+1 auc_1 vs au…       1      5.69e-2  0.0522  0.0617   0.01         0        0   
+2 auc_1 vs au…       1      5.63e-2  0.0514  0.0610   0.01         0        0   
+3 auc_2 vs au…       0.394 -6.41e-4 -0.00537 0.00403  0.01         0        1.00
 # ℹ 1 more variable: pract_pos &lt;dbl&gt;</code></pre>
 </div>
 </div>
 <p>Directional contrast (vs 0)</p>
+<ul>
+<li>set size = 0</li>
+</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>pp_contrasts <span class="sc">|&gt;</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(contrast <span class="sc">==</span> <span class="st">"auc_1 vs. auc_2"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auc1_gt_auc2 =</span> <span class="fu">if_else</span>(difference <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(auc1_gt_auc2) <span class="sc">|&gt;</span> </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(pp_contrasts, <span class="at">size =</span> <span class="dv">0</span>, <span class="at">prob =</span> <span class="fl">0.95</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 1</code></pre>
+<pre><code># A tibble: 3 × 9
+  contrast     probability     mean    lower   upper  size pract_neg pract_equiv
+  &lt;chr&gt;              &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+1 auc_1 vs au…       1      5.69e-2  0.0522  0.0617      0        NA          NA
+2 auc_1 vs au…       1      5.63e-2  0.0514  0.0610      0        NA          NA
+3 auc_2 vs au…       0.394 -6.41e-4 -0.00537 0.00403     0        NA          NA
+# ℹ 1 more variable: pract_pos &lt;dbl&gt;</code></pre>
 </div>
+</div>
+<p>Here is the more “manual” method. Useful for understanding.</p>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>pp_contrasts <span class="sc">|&gt;</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(contrast <span class="sc">==</span> <span class="st">"auc_1 vs. auc_3"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auc1_gt_auc3 =</span> <span class="fu">if_else</span>(difference <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(auc1_gt_auc3) <span class="sc">|&gt;</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(contrast <span class="sc">==</span> <span class="st">"auc_1 vs. auc_2"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auc1_gt_auc2 =</span> <span class="fu">if_else</span>(difference <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(auc1_gt_auc2) <span class="sc">|&gt;</span> </span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>pp_contrasts <span class="sc">|&gt;</span> </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(contrast <span class="sc">==</span> <span class="st">"auc_2 vs. auc_3"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auc2_gt_auc3 =</span> <span class="fu">if_else</span>(difference <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(auc2_gt_auc3) <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(contrast <span class="sc">==</span> <span class="st">"auc_1 vs. auc_3"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auc1_gt_auc3 =</span> <span class="fu">if_else</span>(difference <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(auc1_gt_auc3) <span class="sc">|&gt;</span> </span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.4235</code></pre>
+<pre><code>[1] 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>pp_contrasts <span class="sc">|&gt;</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(contrast <span class="sc">==</span> <span class="st">"auc_2 vs. auc_3"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">auc2_gt_auc3 =</span> <span class="fu">if_else</span>(difference <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(auc2_gt_auc3) <span class="sc">|&gt;</span> </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.394</code></pre>
 </div>
 </div>
 <p>Plots</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_classic</span>()) </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="sc">%&gt;%</span> </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"auc_1"</span>, <span class="st">"auc_2"</span>, <span class="st">"auc_3"</span>))) <span class="sc">%&gt;%</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x =</span> posterior, <span class="at">fill =</span> model), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> .<span class="dv">4</span>, </span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>model, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="st">"Posterior Probability"</span>, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">500</span>, <span class="dv">1000</span>)) <span class="sc">+</span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ylab("Posterior Probability Density") +</span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Area Under ROC Curve"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_classic</span>()) </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="sc">%&gt;%</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model =</span> <span class="fu">factor</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"auc_1"</span>, <span class="st">"auc_2"</span>, <span class="st">"auc_3"</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x =</span> posterior, <span class="at">fill =</span> model), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> .<span class="dv">4</span>, </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">bins =</span> <span class="dv">30</span>) <span class="sc">+</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>model, <span class="at">ncol =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="st">"Posterior Probability"</span>, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">500</span>, <span class="dv">1000</span>)) <span class="sc">+</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ylab("Posterior Probability Density") +</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Area Under ROC Curve"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="bayes_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+<p><img src="bayes_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -493,36 +510,37 @@ See help('prior_summary.stanreg') for more details</code></pre>
 <h2 data-number="2.4" class="anchored" data-anchor-id="directly-with-stan"><span class="header-section-number">2.4</span> Directly with STAN</h2>
 <p>Pivot data to long format</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>auc_long <span class="ot">&lt;-</span> auc <span class="sc">|&gt;</span> </span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"auc_"</span>),</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"model"</span>,</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"auc"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">id =</span> repeat_id,</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">id2 =</span> fold_id) <span class="sc">|&gt;</span> </span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model_1 =</span> <span class="fu">if_else</span>(model <span class="sc">==</span> <span class="st">"auc_1"</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">model_2 =</span> <span class="fu">if_else</span>(model <span class="sc">==</span> <span class="st">"auc_2"</span>, <span class="dv">1</span>, <span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>auc_long <span class="ot">&lt;-</span> auc <span class="sc">|&gt;</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"auc_"</span>),</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"model"</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"auc"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">id =</span> repeat_id,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">id2 =</span> fold_id) <span class="sc">|&gt;</span> </span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">model_2 =</span> <span class="fu">if_else</span>(model <span class="sc">==</span> <span class="st">"auc_2"</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">model_3 =</span> <span class="fu">if_else</span>(model <span class="sc">==</span> <span class="st">"auc_3"</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">model =</span> <span class="fu">fct</span>(model, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"auc_1"</span>, <span class="st">"auc_2"</span>, <span class="st">"auc_3"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>pp_2 <span class="ot">&lt;-</span> auc_long <span class="sc">|&gt;</span> </span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stan_glmer</span>(<span class="at">data =</span> _,</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">formula =</span> auc <span class="sc">~</span> model_1 <span class="sc">+</span> model_2 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id2<span class="sc">/</span>id),</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>         <span class="co"># prior_intercept = rstanarm::student_t(autoscale = TRUE),</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>         <span class="co"># prior = rstanarm::student_t(autoscale = TRUE),</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>         <span class="co"># hetero_var = TRUE,</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>         <span class="co"># transform = tidyposterior::logit_trans,  # for skewed &amp; bounded AUC</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">iter =</span> <span class="dv">2000</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="co"># defaults listed here for easy increase  </span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">adapt_delta =</span> .<span class="dv">99</span>,   <span class="co"># default = .80.  Increase to &lt; 1</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>         <span class="co"># cores = 4, seed = 12345,</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">family =</span> gaussian, </span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>pp2 <span class="ot">&lt;-</span> auc_long <span class="sc">|&gt;</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stan_glmer</span>(<span class="at">data =</span> _,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">formula =</span> auc <span class="sc">~</span> model_2 <span class="sc">+</span> model_3 <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> id2<span class="sc">/</span>id),</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>         <span class="co"># prior_intercept = rstanarm::student_t(autoscale = TRUE),</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>         <span class="co"># prior = rstanarm::student_t(autoscale = TRUE),</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>         <span class="co"># hetero_var = TRUE,</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>         <span class="co"># transform = tidyposterior::logit_trans,  # for skewed &amp; bounded AUC</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">iter =</span> <span class="dv">2000</span>, <span class="at">chains =</span> <span class="dv">4</span>, <span class="co"># defaults listed here for easy increase  </span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>         <span class="at">adapt_delta =</span> .<span class="dv">80</span>,   <span class="co"># default = .80.  Increase to &lt; 1</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>         <span class="co"># cores = 4, seed = 12345,</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">family =</span> gaussian, </span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 1).
 Chain 1: 
-Chain 1: Gradient evaluation took 3.8e-05 seconds
-Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.38 seconds.
+Chain 1: Gradient evaluation took 5.6e-05 seconds
+Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.56 seconds.
 Chain 1: Adjust your expectations accordingly!
 Chain 1: 
 Chain 1: 
@@ -539,15 +557,15 @@ Chain 1: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 1: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 1: 
-Chain 1:  Elapsed Time: 7.19 seconds (Warm-up)
-Chain 1:                0.912 seconds (Sampling)
-Chain 1:                8.102 seconds (Total)
+Chain 1:  Elapsed Time: 7.106 seconds (Warm-up)
+Chain 1:                0.455 seconds (Sampling)
+Chain 1:                7.561 seconds (Total)
 Chain 1: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 2).
 Chain 2: 
-Chain 2: Gradient evaluation took 3.1e-05 seconds
-Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.31 seconds.
+Chain 2: Gradient evaluation took 5.6e-05 seconds
+Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.56 seconds.
 Chain 2: Adjust your expectations accordingly!
 Chain 2: 
 Chain 2: 
@@ -564,9 +582,9 @@ Chain 2: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 2: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 2: 
-Chain 2:  Elapsed Time: 9.548 seconds (Warm-up)
-Chain 2:                0.566 seconds (Sampling)
-Chain 2:                10.114 seconds (Total)
+Chain 2:  Elapsed Time: 6.199 seconds (Warm-up)
+Chain 2:                0.558 seconds (Sampling)
+Chain 2:                6.757 seconds (Total)
 Chain 2: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 3).
@@ -589,9 +607,9 @@ Chain 3: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 3: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 3: 
-Chain 3:  Elapsed Time: 7.497 seconds (Warm-up)
-Chain 3:                0.866 seconds (Sampling)
-Chain 3:                8.363 seconds (Total)
+Chain 3:  Elapsed Time: 6.741 seconds (Warm-up)
+Chain 3:                0.419 seconds (Sampling)
+Chain 3:                7.16 seconds (Total)
 Chain 3: 
 
 SAMPLING FOR MODEL 'continuous' NOW (CHAIN 4).
@@ -614,10 +632,55 @@ Chain 4: Iteration: 1600 / 2000 [ 80%]  (Sampling)
 Chain 4: Iteration: 1800 / 2000 [ 90%]  (Sampling)
 Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
 Chain 4: 
-Chain 4:  Elapsed Time: 10.092 seconds (Warm-up)
-Chain 4:                1.098 seconds (Sampling)
-Chain 4:                11.19 seconds (Total)
+Chain 4:  Elapsed Time: 6.934 seconds (Warm-up)
+Chain 4:                0.554 seconds (Sampling)
+Chain 4:                7.488 seconds (Total)
 Chain 4: </code></pre>
+</div>
+</div>
+<p>Make new data for posterior prediction</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>new_dat2 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">id =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="at">id2 =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>), </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">model_2 =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>),</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">model_3 =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>pp2_tidy <span class="ot">&lt;-</span> <span class="fu">posterior_epred</span>(pp2, <span class="at">newdata =</span> new_dat2, <span class="at">seed =</span> <span class="dv">123</span>, <span class="at">re.form =</span> <span class="cn">NA</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(pp2_tidy) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"auc_1"</span>, <span class="st">"auc_2"</span>, <span class="st">"auc_3"</span>) </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>pp2_tidy <span class="ot">&lt;-</span> pp2_tidy <span class="sc">|&gt;</span> </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a> <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"model"</span>, <span class="at">values_to =</span> <span class="st">"posterior"</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(pp2_tidy) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"posterior"</span>, <span class="fu">class</span>(pp2_tidy))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Compare</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>pp_tidy <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Posterior samples of performance
+# A tibble: 6 × 2
+  model posterior
+  &lt;chr&gt;     &lt;dbl&gt;
+1 auc_1     0.903
+2 auc_2     0.845
+3 auc_3     0.849
+4 auc_1     0.903
+5 auc_2     0.849
+6 auc_3     0.846</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>pp2_tidy <span class="sc">|&gt;</span> <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Posterior samples of performance
+# A tibble: 6 × 2
+  model posterior
+  &lt;chr&gt;     &lt;dbl&gt;
+1 auc_1     0.903
+2 auc_2     0.845
+3 auc_3     0.849
+4 auc_1     0.903
+5 auc_2     0.849
+6 auc_3     0.846</code></pre>
 </div>
 </div>
 

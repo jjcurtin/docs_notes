@@ -10,7 +10,6 @@ library(tidyverse)
 library(tidymodels)
 library(tidyposterior)
 library(rstanarm)
-library(broom.mixed)
 ```
 
 Make fake data
@@ -33,6 +32,7 @@ auc <- tibble(repeat_id = rep(1:3, each = 10),
   * https://mc-stan.org/rstanarm/articles/rstanarm.html
   * https://mc-stan.org/rstanarm/articles/priors.html
   * https://mc-stan.org/rstanarm/articles/continuous.html
+  * https://www.andrewheiss.com/blog/2022/09/26/guide-visualizing-types-posteriors/
   
 ## Tidymodels approach
 
