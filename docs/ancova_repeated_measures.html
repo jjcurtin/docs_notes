@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>John Curtin’s Stats and Coding Notebook - 3&nbsp; ANCOVA vs.&nbsp;Differnce Scores</title>
+<title>John Curtin’s Stats and Coding Notebook - 3&nbsp; ANCOVA vs.&nbsp;Difference Scores</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -109,7 +109,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ancova_repeated_measures.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">ANCOVA vs. Differnce Scores</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ancova_repeated_measures.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">ANCOVA vs. Difference Scores</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -158,7 +158,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ancova_repeated_measures.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">ANCOVA vs.&nbsp;Differnce Scores</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">ANCOVA vs.&nbsp;Difference Scores</span></span></a>
   </div>
 </li>
     </ul>
@@ -181,7 +181,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">ANCOVA vs.&nbsp;Differnce Scores</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">ANCOVA vs.&nbsp;Difference Scores</span></h1>
 </div>
 
 
@@ -206,13 +206,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Although it may not be immediately obvious, these two analyses are <strong>almost</strong> identical if we do some simple manipulation of the GLM models</p>
 <p>Lets call pre-test scores <span class="math inline">\(y_1\)</span> and post-test scores <span class="math inline">\(y_2\)</span></p>
 <p>For the repeated measures analyses:</p>
-<p><span class="math inline">\((y_2 - y_1) = b_0 + b_1*Group\)</span>, which can be re-written as</p>
-<p><span class="math inline">\(y_2 = b_0 + b_1*Group + y_1\)</span></p>
+<ul>
+<li><p><span class="math inline">\((y_2 - y_1) = b_0 + b_1*Group\)</span>, which can be re-written as</p></li>
+<li><p><span class="math inline">\(y_2 = b_0 + b_1*Group + y_1\)</span></p></li>
+</ul>
 <p>For ANCOVA analyses</p>
-<p><span class="math inline">\(y_2 = b_0 + b_1*Group + b_2*y_1\)</span></p>
+<ul>
+<li><span class="math inline">\(y_2 = b_0 + b_1*Group + b_2*y_1\)</span></li>
+</ul>
 <p>As you can see, the two equations are almost equivalent. In both equations, our primary hypothesis requires a test of <span class="math inline">\(b_1\)</span>. The only difference across these two GLMS is that for ANCOVA, we estimate <span class="math inline">\(b_2\)</span> (the coefficient for <span class="math inline">\(y_1\)</span>) such that it minimizes the SSE whereas for the repeated measures approach we fix that coefficient to <span class="math inline">\(1\)</span>. It should be obvious that the ANCOVA will have an SSE that is lower than the repeated measures approach unless <span class="math inline">\(b_2\)</span> = 1. <span class="math inline">\(b_2\)</span> will only equal 1 if</p>
 <ul>
-<li>the variances of <span class="math inline">\(y-1\)</span> and <span class="math inline">\(y_2\)</span> are equal,</li>
+<li>the variances of <span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> are equal,</li>
 <li><span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> are perfectly correlated, and</li>
 <li>The magnitude of the <code>Group</code> effect is the same for all subjects</li>
 </ul>
@@ -227,9 +231,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>It is trivial to simulate these two analyses to demonstrate the improvements in power offered by the ANCOVA approach.</p>
 <p>Lets assume</p>
 <ul>
-<li>The groups do not systematically differ on <span class="math inline">\(y_1\)</span> (given random assignment. Of course, in any sample within the simulation the there will be non-systematic differences across groups do to sampling error).</li>
+<li>The groups do not systematically differ on <span class="math inline">\(y_1\)</span> (given random assignment. Of course, in any sample within the simulation there will be non-systematic differences across groups do to sampling error).</li>
 <li>The groups differ by 1.5 units on <span class="math inline">\(y_2\)</span> (approximately 1/2 of a standard deviation for a moderate effect size). We will fix this effect to be the same for all participants (if we allowed to vary, the power advantage for ANCOVA would increase further)</li>
-<li><span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> have equal variances (set to 10; if these variances were not equal, the power advantage will increase for ANCOVA). We will set the mean for <span class="math inline">\(y\)</span>, without intervention to 20. This has not effect on power.</li>
+<li><span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> have equal variances (set to 10; if these variances were not equal, the power advantage will increase for ANCOVA). We will set the mean for <span class="math inline">\(y\)</span>, without intervention to 20. This has no effect on power.</li>
 <li><span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> are correlated at 0.75 (this value could be adjusted up and down. As it decreases, the power advantage will increase for ANCOVA. 0.75 is a high estimate in my experience for this correlation).</li>
 <li>We will use a sample size of 50</li>
 </ul>

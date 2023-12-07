@@ -3,7 +3,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-# ANCOVA vs. Differnce Scores
+# ANCOVA vs. Difference Scores
 
 ## Overview
 
@@ -18,13 +18,13 @@ Lets call pre-test scores $y_1$ and post-test scores $y_2$
 
 For the repeated measures analyses:
 
-$(y_2 - y_1) = b_0 + b_1*Group$, which can be re-written as
+- $(y_2 - y_1) = b_0 + b_1*Group$, which can be re-written as
 
-$y_2 = b_0 + b_1*Group + y_1$
+- $y_2 = b_0 + b_1*Group + y_1$
 
 For ANCOVA analyses
 
-$y_2 = b_0 + b_1*Group + b_2*y_1$
+- $y_2 = b_0 + b_1*Group + b_2*y_1$
 
 
 As you can see, the two equations are almost equivalent.  In both equations, our primary hypothesis requires a test of $b_1$.  The only difference across these two GLMS is that for ANCOVA, we estimate $b_2$ (the coefficient for $y_1$) such that it minimizes the SSE whereas for the repeated measures approach we fix that coefficient to $1$.   It should be obvious that the ANCOVA will have an SSE that is lower than the repeated measures approach unless $b_2$ = 1.  $b_2$ will only equal 1 if
