@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>John Curtin’s Stats and Coding Notebook - 3&nbsp; Untitled</title>
+<title>John Curtin’s Stats and Coding Notebook - 3&nbsp; ANCOVA vs.&nbsp;Differnce Scores</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -109,7 +109,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ancova_repeated_measures.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Untitled</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ancova_repeated_measures.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">ANCOVA vs. Differnce Scores</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -158,7 +158,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./ancova_repeated_measures.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Untitled</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">ANCOVA vs.&nbsp;Differnce Scores</span></span></a>
   </div>
 </li>
     </ul>
@@ -171,11 +171,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#ancova-vs.-differnce-scoresi" id="toc-ancova-vs.-differnce-scoresi" class="nav-link active" data-scroll-target="#ancova-vs.-differnce-scoresi"><span class="header-section-number">4</span> ANCOVA vs.&nbsp;Differnce Scoresi</a>
-  <ul class="collapse">
-  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview"><span class="header-section-number">4.1</span> Overview</a></li>
-  <li><a href="#simulation" id="toc-simulation" class="nav-link" data-scroll-target="#simulation"><span class="header-section-number">4.2</span> Simulation</a></li>
-  </ul></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">3.1</span> Overview</a></li>
+  <li><a href="#simulation" id="toc-simulation" class="nav-link" data-scroll-target="#simulation"><span class="header-section-number">3.2</span> Simulation</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/jjcurtin/docs_notes/edit/main/ancova_repeated_measures.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
@@ -184,7 +181,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Untitled</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">ANCOVA vs.&nbsp;Differnce Scores</span></h1>
 </div>
 
 
@@ -199,10 +196,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="ancova-vs.-differnce-scoresi" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> ANCOVA vs.&nbsp;Differnce Scoresi</h1>
-<section id="overview" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">4.1</span> Overview</h2>
+<section id="overview" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">3.1</span> Overview</h2>
 <p>There are at least two obvious options for the analysis of a design that involved <code>Group</code> (e.g., intervention) x <code>Time</code> (pre-test vs.&nbsp;post-test) when participants are randomly assigned to <code>Group</code> and pre-test is measured before that random assignment (such that we can be certain the pre-test is not correlated with <code>Group</code> at the population level).<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <ul>
 <li>A traditional repeated measures analysis with <code>Group</code> as a between subject factor and <code>Time</code> (pre-test vs.&nbsp;post-test) as a within subject factor. In this analysis, we are interested in the Group X Time interaction. To accomplish this analysis within the GLM, we regress post-test vs.&nbsp;pre-test difference score on <code>Group</code> and test the parameter estimate for the <code>Group</code> effect. (see below)</li>
@@ -213,7 +208,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>For the repeated measures analyses:</p>
 <p><span class="math inline">\((y_2 - y_1) = b_0 + b_1*Group\)</span>, which can be re-written as</p>
 <p><span class="math inline">\(y_2 = b_0 + b_1*Group + y_1\)</span></p>
-<p>For ANCOVA analyses <span class="math inline">\(y_2 = b_0 + b_1*Group + b_2*y_1\)</span></p>
+<p>For ANCOVA analyses</p>
+<p><span class="math inline">\(y_2 = b_0 + b_1*Group + b_2*y_1\)</span></p>
 <p>As you can see, the two equations are almost equivalent. In both equations, our primary hypothesis requires a test of <span class="math inline">\(b_1\)</span>. The only difference across these two GLMS is that for ANCOVA, we estimate <span class="math inline">\(b_2\)</span> (the coefficient for <span class="math inline">\(y_1\)</span>) such that it minimizes the SSE whereas for the repeated measures approach we fix that coefficient to <span class="math inline">\(1\)</span>. It should be obvious that the ANCOVA will have an SSE that is lower than the repeated measures approach unless <span class="math inline">\(b_2\)</span> = 1. <span class="math inline">\(b_2\)</span> will only equal 1 if</p>
 <ul>
 <li>the variances of <span class="math inline">\(y-1\)</span> and <span class="math inline">\(y_2\)</span> are equal,</li>
@@ -223,8 +219,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This will almost never be true. At a minimum, assuming we measure <span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> with less than perfect reliability, they will not correlate perfectly.</p>
 <p>Because the SSE will be lower for the ANCOVA approach, the standard error will be lower for the test of <span class="math inline">\(b_1\)</span> and we will have more power to test if it is different from 0. ANCOVA is the preferred approach. <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 </section>
-<section id="simulation" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="simulation"><span class="header-section-number">4.2</span> Simulation</h2>
+<section id="simulation" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="simulation"><span class="header-section-number">3.2</span> Simulation</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -320,7 +316,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Use ANCOVA not repeated measures unless you want to leave this power benefit on the table!</p>
 
 
-</section>
 </section>
 <section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr>
