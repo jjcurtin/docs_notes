@@ -1,0 +1,127 @@
+---
+title: "Untitled"
+editor_options: 
+  chunk_output_type: console
+---
+
+# ANCOVA vs. Differnce Scoresi
+
+## Overview
+
+There are at least two obvious options for the analysis of a design that involved `Group` (e.g., intervention) x `Time` (pre-test vs. post-test) when participants are randomly assigned to `Group` and pre-test is measured before that random assignment (such that we can be certain the pre-test is not correlated with `Group` at the population level).^[Note that the test of the intercept in this GLM is equivalent to the test of the Time main effect.  To get the `Group` main effect, we need to fit a second GLM, where the mean of pre-test and post-test is regressed on `Group`.  But these effects are not typically our focus in this design.]
+
+- A traditional repeated measures analysis with `Group` as a between subject factor and `Time` (pre-test vs. post-test) as a within subject factor.  In this analysis, we are interested in the Group X Time interaction.  To accomplish this analysis within the GLM, we regress post-test vs. pre-test difference score on `Group` and test the parameter estimate for the `Group` effect. (see below)
+- An ANCOVA analysis with `Group` as a between subjects factor and pre-test scores as a covariate.  Post-test scores are the dependent variable.  To accomplish this analysis within the GLM, we regress post-test scores on `Group` and `Pre-test` scores and test the parameter estimate for the `Group` effect.
+
+Although it may not be immediately obvious, these two analyses are **almost** identical if we do some simple manipulation of the GLM models
+
+Lets call pre-test scores $y_1$ and post-test scores $y_2$
+
+For the repeated measures analyses:
+
+$(y_2 - y_1) = b_0 + b_1*Group$, which can be re-written as
+
+$y_2 = b_0 + b_1*Group + y_1$
+
+For ANCOVA analyses
+$y_2 = b_0 + b_1*Group + b_2*y_1$
+
+
+As you can see, the two equations are almost equivalent.  In both equations, our primary hypothesis requires a test of $b_1$.  The only difference across these two GLMS is that for ANCOVA, we estimate $b_2$ (the coefficient for $y_1$) such that it minimizes the SSE whereas for the repeated measures approach we fix that coefficient to $1$.   It should be obvious that the ANCOVA will have an SSE that is lower than the repeated measures approach unless $b_2$ = 1.  $b_2$ will only equal 1 if
+
+- the variances of $y-1$ and $y_2$ are equal,
+- $y_1$ and $y_2$ are perfectly correlated, and
+- The magnitude of the `Group` effect is the same for all subjects
+
+This will almost never be true. At a minimum, assuming we measure $y_1$ and $y_2$ with less than perfect reliability, they will not correlate perfectly.
+
+Because the SSE will be lower for the ANCOVA approach, the standard error will be lower for the test of $b_1$ and we will have more power to test if it is different from 0.   ANCOVA is the preferred approach. ^[Note that this is only true **if** $y_1$ is unrelated to `Group` as is true with random assignment to `Group` and pre-test measured before that assignment $y_2$ could be expected to be correlated systematically across samples with ` Group`, the test of $b_1$ will be biased and this analysis approach should not be done.  The repeated measures analyses is the appropriate analysis in that instance.]
+
+## Simulation
+```{r}
+library(tidyverse)
+```
+
+It is trivial to simulate these two analyses to demonstrate the improvements in power offered by the ANCOVA approach.
+
+Lets assume
+
+- The groups do not systematically differ on $y_1$ (given random assignment. Of course, in any sample within the simulation the there will be non-systematic differences across groups do to sampling error).
+- The groups differ by 1.5 units on $y_2$ (approximately 1/2 of a standard deviation for a moderate effect size).  We will fix this effect to be the same for all participants (if we allowed to vary, the power advantage for ANCOVA would increase further)
+- $y_1$ and $y_2$ have equal variances (set to 10; if these variances were not equal, the  power advantage will increase for ANCOVA).  We will set the mean for $y$, without intervention to 20.  This has not effect on power. 
+- $y_1$ and $y_2$ are correlated at 0.75 (this value could be adjusted up and down.  As it decreases, the power advantage will increase for ANCOVA.  0.75 is a high estimate in my experience for this correlation).
+- We will use a sample size of 50
+
+Here is a function to generate sample data that meet these assumptions
+
+```{r}
+sim_data <- function(sim_num) {
+  n <- 50
+  group_effect <-1.5 
+  sigma <- matrix(c(10, 7.5, 7.5, 10), nrow = 2)
+  means <- c(20, 20)
+  
+  y <- MASS::mvrnorm(n = n, mu = means, Sigma = sigma)
+  
+  tibble(sim_num = sim_num,
+         id = 1:n,
+         group = rep(c("control", "intervention"), times = n/2),
+         y1 = y[,1],
+         y2 = if_else(group == "intervention", 
+                      y[,2] + group_effect,
+                      y[,2]),
+         c_group = if_else(group == "intervention", 0.5, -0.5))
+}
+```
+
+And a function to run the two analyses and extract $b_1$ and its p-value
+
+```{r}
+get_results <- function(d){
+  
+  m_rep <- lm(y2 - y1 ~ c_group, data = d) |> 
+    broom::tidy() |> 
+    mutate(sim_num = d$sim_num[1],
+           method = "repeated")
+  
+  m_ancova <- lm(y2 ~ c_group + y1, data = d) |> 
+    broom::tidy() |> 
+    mutate(sim_num = d$sim_num[1],
+           method = "ancova")
+  
+  bind_rows(m_rep, m_ancova)
+}
+```
+
+
+Now lets run 5,000 simulations
+ 
+```{r}
+set.seed(123456)
+
+sims <- 1:5000 |> 
+  map(\(sim_num) sim_data(sim_num)) |> 
+  map(\(d) get_results(d)) |> 
+  list_rbind()
+```
+ 
+And check the results
+
+- First confirm that both methods extract the correct parameter estimate of 5
+```{r}
+sims |> 
+  filter(term == "c_group") |> 
+  group_by(method) |> 
+  summarize(mean_b = mean(estimate))
+```
+
+- Evaluate power (percent sig effects for group)
+```{r}
+sims |> 
+  filter(term == "c_group") |> 
+  mutate(sig = if_else(p.value < .05, 1,  0)) |> 
+  group_by(method) |> 
+  summarize(power = mean(sig))
+```
+
+Use ANCOVA not repeated measures unless you want to leave this power benefit on the table!
