@@ -24,3 +24,4 @@ book:
     - repeated_measures.qmd
     - bayes.qmd
     - ancova_repeated_measures.qmd
+    - transformations.qmd
