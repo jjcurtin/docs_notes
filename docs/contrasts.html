@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="John J. Curtin, PhD">
 
-<title>John Curtin’s Stats and Coding Notebook</title>
+<title>John Curtin’s Stats and Coding Notebook - 3&nbsp; Setting contrast matrices for factors</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -31,7 +64,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./repeated_measures.html" rel="next">
+<link href="./bayes.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -62,6 +95,8 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -74,7 +109,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Welcome</a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./contrasts.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Setting contrast matrices for factors</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
@@ -104,7 +139,7 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Welcome</span></a>
   </div>
 </li>
@@ -122,7 +157,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./contrasts.html" class="sidebar-item-text sidebar-link">
+  <a href="./contrasts.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Setting contrast matrices for factors</span></span></a>
   </div>
 </li>
@@ -136,28 +171,26 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#welcome" id="toc-welcome" class="nav-link active" data-scroll-target="#welcome">Welcome</a></li>
+  <li><a href="#sample-data" id="toc-sample-data" class="nav-link active" data-scroll-target="#sample-data"><span class="header-section-number">3.1</span> Sample data</a></li>
+  <li><a href="#default-contrasts" id="toc-default-contrasts" class="nav-link" data-scroll-target="#default-contrasts"><span class="header-section-number">3.2</span> Default contrasts</a></li>
+  <li><a href="#base-r-approach-for-other-contrasts" id="toc-base-r-approach-for-other-contrasts" class="nav-link" data-scroll-target="#base-r-approach-for-other-contrasts"><span class="header-section-number">3.3</span> Base R approach for other contrasts</a></li>
+  <li><a href="#an-improved-approach" id="toc-an-improved-approach" class="nav-link" data-scroll-target="#an-improved-approach"><span class="header-section-number">3.4</span> An improved approach</a></li>
+  <li><a href="#available-contrasts" id="toc-available-contrasts" class="nav-link" data-scroll-target="#available-contrasts"><span class="header-section-number">3.5</span> Available contrasts</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/jjcurtin/docs_notes/edit/main/index.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/jjcurtin/docs_notes/edit/main/contrasts.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">John Curtin’s Stats and Coding Notebook</h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Setting contrast matrices for factors</span></h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>John J. Curtin, PhD </p>
-          </div>
-  </div>
     
   
     
@@ -166,9 +199,145 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="welcome" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="welcome">Welcome</h2>
-<p>This web book is a collection of John Curtin’s exploration of stats and coding issues. These chapters are mostly for John and not intended for external use though John may occasionally share it with colleagues to stimulate discussion and debate.</p>
+<ul>
+<li>see: https://marissabarlaz.github.io/portfolio/contrastcoding/</li>
+<li>Default for unordered factors is treatment/dummy</li>
+<li>We typically want centered orthogonal, and unit weighted.</li>
+<li>We will use a running example of a factor, <span class="math inline">\(x\)</span>, with three levels. We put <span class="math inline">\(x\)</span> in a dataframe to match our typical workflows</li>
+<li>We then follow with several examples of setting and applying contrasts to <span class="math inline">\(x\)</span></li>
+</ul>
+<section id="sample-data" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="sample-data"><span class="header-section-number">3.1</span> Sample data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"A"</span>,<span class="st">"B"</span>, <span class="st">"C"</span>), <span class="dv">4</span>)))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 × 1
+   x    
+   &lt;fct&gt;
+ 1 A    
+ 2 B    
+ 3 C    
+ 4 A    
+ 5 B    
+ 6 C    
+ 7 A    
+ 8 B    
+ 9 C    
+10 A    
+11 B    
+12 C    </code></pre>
+</div>
+</div>
+</section>
+<section id="default-contrasts" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="default-contrasts"><span class="header-section-number">3.2</span> Default contrasts</h2>
+<p>The default contrasts for factors in R as set and viewed using <code>options()</code></p>
+<ul>
+<li>They are contr.treatment (i.e., dummy codes) for unordered factors</li>
+<li>They are contr.poly for ordered factors</li>
+<li>We do not tend to change these defaults but instead explicitly set other contrasts when we need them</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">"contrasts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$contrasts
+        unordered           ordered 
+"contr.treatment"      "contr.poly" </code></pre>
+</div>
+</div>
+<p>We can confirm the contrasts set by default for <span class="math inline">\(x\)</span> as follows</p>
+<ul>
+<li>They are dummy codes</li>
+<li>They are named for the level being contrasted with refererence</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(d<span class="sc">$</span>x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  B C
+A 0 0
+B 1 0
+C 0 1</code></pre>
+</div>
+</div>
+</section>
+<section id="base-r-approach-for-other-contrasts" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="base-r-approach-for-other-contrasts"><span class="header-section-number">3.3</span> Base R approach for other contrasts</h2>
+<p>We set contrasts using the <code>contrasts()</code> function as well. We <em>could</em> use base R functions that define contrast matrices for classic contrasts as well</p>
+<ul>
+<li>But the coefficients aren’t united weighted (my preference)</li>
+<li>And the contrasts aren’t given descriptive labels</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(d<span class="sc">$</span>x) <span class="ot">&lt;-</span> <span class="fu">contr.helmert</span>(<span class="fu">levels</span>(d<span class="sc">$</span>x))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(d<span class="sc">$</span>x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [,1] [,2]
+A   -1   -1
+B    1   -1
+C    0    2</code></pre>
+</div>
+</div>
+</section>
+<section id="an-improved-approach" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="an-improved-approach"><span class="header-section-number">3.4</span> An improved approach</h2>
+<p>We tweak this approach to get unit weights (only for Helmert) and meaningful contrast labels</p>
+<ul>
+<li>First we get the contrast matrix (same as above)</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>c3 <span class="ot">&lt;-</span> <span class="fu">contr.helmert</span>(<span class="fu">levels</span>(d<span class="sc">$</span>x))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>c3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [,1] [,2]
+A   -1   -1
+B    1   -1
+C    0    2</code></pre>
+</div>
+</div>
+<ul>
+<li>Then we adjust to make coefficients unit-weighted. This simply requires dividing each column by its range. You could put this in a loop if you had more columns. We generally only do this for helmert or other orthogonal contrasts.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>c3[, <span class="dv">1</span>] <span class="ot">&lt;-</span> c3[, <span class="dv">1</span>] <span class="sc">/</span> (<span class="fu">max</span>(c3[, <span class="dv">1</span>]) <span class="sc">-</span> <span class="fu">min</span>(c3[, <span class="dv">1</span>]))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>c3[, <span class="dv">2</span>] <span class="ot">&lt;-</span> c3[, <span class="dv">2</span>] <span class="sc">/</span> (<span class="fu">max</span>(c3[, <span class="dv">2</span>]) <span class="sc">-</span> <span class="fu">min</span>(c3[, <span class="dv">2</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>Now assign names to the columns to label the contrasts</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(c3) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"BvA"</span>, <span class="st">"CvBA"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>c3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   BvA       CvBA
+A -0.5 -0.3333333
+B  0.5 -0.3333333
+C  0.0  0.6666667</code></pre>
+</div>
+</div>
+<ul>
+<li>And now assign these contrasts to <span class="math inline">\(x\)</span></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(d<span class="sc">$</span>x) <span class="ot">&lt;-</span> c3</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(d<span class="sc">$</span>x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   BvA       CvBA
+A -0.5 -0.3333333
+B  0.5 -0.3333333
+C  0.0  0.6666667</code></pre>
+</div>
+</div>
+</section>
+<section id="available-contrasts" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="available-contrasts"><span class="header-section-number">3.5</span> Available contrasts</h2>
+<p>The contrasts we use most regularly are</p>
+<ul>
+<li>Dummy contrasts (<code>contr.treatment()</code>). These are set by default to unordered factors</li>
+<li>Helmert contrasts (<code>contrl.helmert()</code>).</li>
+<li>Effects constrasts (<code>contr.sum()</code>). We do not generally unit weight these</li>
+</ul>
 
 
 </section>
@@ -409,11 +578,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="./bayes.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Bayesian Analyses with rstanarm</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./repeated_measures.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Analysis of Repeated Measures in R</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
