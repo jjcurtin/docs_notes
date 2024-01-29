@@ -23,7 +23,6 @@ book:
     - index.qmd
     - repeated_measures.qmd
     - bayes.qmd
-    - contrasts.qmd
     - ancova_repeated_measures.qmd
     - transformations.qmd
     - research_design.qmd
