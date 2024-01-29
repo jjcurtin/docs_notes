@@ -1,0 +1,14 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
+
+# Research Design Topics
+
+## Alternatives to random assignment to groups
+
+This is based on a [proseminar lecture](lectures/greene_joessel_2023.pdf) by Shawn Greene and Freya Joessel
+
+Sella, F., Gal, R., & Roi, C. K. (2021). When randomisation is not good enough: Matching groups in intervention studies. Psychonomic Bulletin & Review, 9. https://doi.org/10.3758/s13423-021-01970-5
+
+And the link to the repository : https://bit.ly/sella-2021-scripts 

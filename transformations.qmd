@@ -1,0 +1,39 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
+
+# Transformations
+
+https://www.r-bloggers.com/2022/10/box-cox-transformation-in-r/
+
+## Determine optimal range for lambda
+
+Calculate and display plot of lambda values
+```{r}
+scores <- exp(rnorm(10))
+out <- MASS::boxcox(lm(scores~1))
+```
+
+View optimal lambda and CI values
+```{r}
+range(out$x[out$y > max(out$y)-qchisq(0.95,1)/2])
+
+out$x[which.max(out$y)]
+```
+
+
+## Applying transformation
+
+see help for `car::bcPower()`
+```{r}
+U <- c(NA, (-3:3))
+
+## Not run: bcPower(U, 0)  # produces an error as U has negative values
+car::bcPower(U, lambda = 0, gamma = 4)
+car::bcnPower(U, lambda = 0, gamma = 2)
+car::basicPower(U, lambda = 0, gamma = 4)
+car::yjPower(U, lambda = 0)
+
+```
+
