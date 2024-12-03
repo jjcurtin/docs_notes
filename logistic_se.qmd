@@ -1,0 +1,98 @@
+---
+editor_options: 
+  chunk_output_type: console
+---
+
+# Exploring SEs for Logistic Regression 
+
+
+## Setup 
+```{r}
+#| messages: false
+#| warnings: false
+
+# packages
+options(conflicts.policy = "depends.ok")
+library(tidyverse)
+
+# source  
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/format_path.R?raw=true", 
+                     sha1 = "a58e57da996d1b70bb9a5b58241325d6fd78890f")
+devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/my_skim.R?raw=true",
+                     sha1 = "839a13530805f9d28f407483a18b7e3368389fe7")
+
+
+# options
+theme_set(theme_classic()) 
+```
+
+
+## Functions 
+
+```{r}
+get_data <- function(n, b0, b1){
+  x <- runif(n, -10, 10) 
+  z <- b0 + b1 * x
+  p <- 1 / (1 + exp(-z))
+  y <- rbinom(n, 1, p)
+  tibble(y = y, x = x)  
+}
+```
+
+
+```{r}
+make_predictions <- function(sim, n, b0, b1){
+  d <- get_data(n, b0, b1)
+  m <- glm(y ~ x, data = d, family = binomial) 
+  preds <- tibble(x = c(-8, -3, 0, 3, 8))
+  preds |> 
+    mutate(py = predict(m, newdata = preds, 
+                        type = "response"),
+           sim = sim)
+}
+```
+
+## Simulate sampling distribution
+
+Settings
+```{r}
+n <- 100
+b0 <- 0
+b1 <- 0.5 
+n_sims <- 30000
+```
+
+simulate predictions to create sampling distribution
+```{r}
+set.seed(2468)
+
+preds <- 1:n_sims |> 
+  map(\(sim) make_predictions(sim, n, b0, b1)) |>
+  list_rbind()
+```
+
+Calculate SE for each prediction
+```{r}
+true_se <- preds |> 
+  group_by(x) |>
+  summarise(se = sd(py), .groups = "drop")
+```
+
+Now fit a single model and get predicts with SE
+```{r}
+d <- get_data(n, b0, b1)
+m <- glm(y ~ x, data = d, family = binomial) 
+sample_preds <- tibble(x = c(-8, -3, 0, 3, 8))
+sample_preds <- sample_preds |> 
+  bind_cols(predict(m, newdata = sample_preds, 
+                        type = "response",
+                        se.fit = TRUE)) |> 
+  select(-fit, -residual.scale)
+```
+
+compare
+```{r}
+true_se
+sample_preds
+```
+
