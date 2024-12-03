@@ -27,7 +27,6 @@ devtools::source_url("https://github.com/jjcurtin/lab_support/blob/main/my_skim.
 theme_set(theme_classic()) 
 ```
 
-
 ## Functions 
 
 ```{r}
@@ -39,7 +38,6 @@ make_data <- function(n, b0, b1){
   tibble(y = y, x = x)  
 }
 ```
-
 
 ```{r}
 get_preds <- function(sim, n, b0, b1){
@@ -64,10 +62,11 @@ get_preds <- function(sim, n, b0, b1){
 
 Settings
 ```{r}
-n <- 400 # set high to have robust models
+# set n high to have robust models (and to handle uncertainty about z vs. t)
+n <- 1000 
 b0 <- 0
 b1 <- 0.5 
-n_sims <- 30000
+n_sims <- 50000
 ```
 
 simulate predictions to create sampling distribution
@@ -83,6 +82,8 @@ preds <- 1:n_sims |>
 
 plan(sequential)
 ```
+
+## Add post simulation calcs to preds
 
 Transform log-odds to pr and get CIs for log-odds, pr from log-odds, and native pr
 ```{r}
